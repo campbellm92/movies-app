@@ -1,13 +1,28 @@
 const express = require("express");
-const knex = require("knex") // (options) needed?
+const options = require("./config/knexconfig");
+const knex = require("knex")(options);
 const logger = require("./config/logger");
 const path = require("path");
+const hbs = require("hbs");
 
 require("dotenv").config();
 
 const port = process.env.PORT || 3000;
 
 const app = express();
+
+const viewsPath = path.join(__dirname, "./templates/views");
+const partialsPath = path.join(__dirname, "./templates/partials");
+app.set("view engine", "hbs");
+app.set("views", viewsPath);
+hbs.registerPartials(partialsPath);
+
+
+app.use((req, res, next) => {
+    req.db = knex
+    next();
+})
+
 
 // access the routes:
 

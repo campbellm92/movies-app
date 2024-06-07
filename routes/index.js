@@ -7,4 +7,14 @@ router.get("/", (req, res) => {
     logger.info("landed @ homepage");
 });
 
+router.get('/test-db', async (req, res) => {
+    try {
+        const data = await req.db('basics').select('*').limit(10);
+        res.json(data);
+    } catch (error) {
+        logger.error('Error fetching data:', error);
+        res.status(500).send('Internal Server Error');
+    }
+});
+
 module.exports = router;
