@@ -1,5 +1,5 @@
 const express = require("express");
-const options = require("./config/knexconfig");
+const options = require("./config/knexfile");
 const knex = require("knex")(options);
 const logger = require("./config/logger");
 const path = require("path");
@@ -11,13 +11,13 @@ const port = process.env.PORT || 3000;
 const app = express();
 
 app.use((req, res, next) => {
-    req.db = knex
+    req.db = knex;
     next();
 })
 
 
 const viewsPath = path.join(__dirname, "./templates/views");
-const partialsPath = path.join(__dirname, "./templates/partials");
+const partialsPath = path.join(__dirname, "./templates/partials"); // src: node course (Udemy)
 app.set("view engine", "hbs");
 app.set("views", viewsPath);
 hbs.registerPartials(partialsPath);

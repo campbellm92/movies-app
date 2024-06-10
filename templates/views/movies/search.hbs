@@ -9,11 +9,26 @@
 <body>
     <div class="main-content">
         {{>header}}
-        <p>Get information about a movie here!</p>
-        <form action="/movies/search" method="GET">
-        <input type="text" placeholder="Search for a movie">
+        <p class="introMessage">Get information about a movie here!</p>
+        <form id="searchForm" action="/movies/search" method="GET">
+        <input id="searchInput" type="text" name="q" value="{{searchTerm}}" placeholder="Search for a movie">
         <button>Search</button>
         </form>
+         <div id="results-div">
+        {{#if movies.length}}
+        <p class="resultsMessage">Showing results for: {{searchTerm}}</p>
+        <ul>
+            {{#each movies}}
+                <li>
+                    <strong>{{primaryTitle}}</strong> ({{startYear}})
+                    <p>Genres: {{genres}}</p>
+                </li>
+                {{/each}}
+        </ul>
+        {{else}}
+        {{error}}
+        {{/if}}
+    </div>
     </div>
     {{>footer}}
 </body>

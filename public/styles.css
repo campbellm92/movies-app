@@ -36,9 +36,39 @@ header a {
     color: #104F55;
 }
 
-p {
+.introMessage {
     margin-bottom: 48px;
     color: #32746D;
+}
+
+form {
+    margin-bottom: 48px;
+}
+
+input {
+    width: 250px;
+    height: 25px;
+}
+
+button {
+    height: 25px;
+}
+
+.resultsMessage {
+    padding-bottom: 18px;
+    font-style: italic;
+}
+
+ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
+
+li {
+    list-style: none;
+    padding-bottom: 18px;
+
 }
 
 footer {
