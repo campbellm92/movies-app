@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const logger = require("../config/logger");
 
+// router for the movies/search endpoint
 router.get("/search", async (req, res, next) => {
   const searchTerm = req.query.q; // https://www.shecodes.io/athena/72173-what-does-req-query-do-in-express-js
   
@@ -39,13 +40,15 @@ router.get("/search", async (req, res, next) => {
   } catch (err) {
     logger.error(err);
     res.render("movies/search", {
-      error: "Error in database query",
+      title: "PopcornBase",
+      error: "Error in database query"
     });
   }
 });
 
 // handlebars if statements: https://www.sitepoint.com/a-beginners-guide-to-handlebars/
 
+// router for the movies/data endpoint
 router.get("/data", async (req, res, next) => {
   const searchTerm = req.query.q;
 

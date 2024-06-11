@@ -40,11 +40,6 @@ router.get("/", async (req, res, next) => {
   }
 });
 
-
-// const json = await res.json();
-// console.log(json);
-// } catch (err) {
-// console.log(err);
-// }
-
 module.exports = router;
+
+// SRC dynamically updating pictures for posters https://stackoverflow.com/questions/12531743/handlebars-templating-and-dynamic-images
