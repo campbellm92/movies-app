@@ -4,6 +4,13 @@ const logger = require("../config/logger");
 
 router.get("/search", async (req, res, next) => {
   const searchTerm = req.query.q; // https://www.shecodes.io/athena/72173-what-does-req-query-do-in-express-js
+  
+  if (searchTerm === undefined) {
+    return res.render("movies/search", {
+      title: "PopcornBase",
+    });
+  };
+  
   try {
     const rows = await req
       .db("basics")
@@ -27,7 +34,8 @@ router.get("/search", async (req, res, next) => {
         searchTerm: searchTerm,
         error: " ",
       });
-    }
+    };
+
   } catch (err) {
     logger.error(err);
     res.render("movies/search", {
@@ -40,6 +48,13 @@ router.get("/search", async (req, res, next) => {
 
 router.get("/data", async (req, res, next) => {
   const searchTerm = req.query.q;
+
+  if (searchTerm === undefined) {
+    return res.render("movies/data", {
+      title: "PopcornBase",
+    });
+  }; 
+
   try {
     const rows = await req
       .db("basics")
@@ -63,12 +78,13 @@ router.get("/data", async (req, res, next) => {
         searchTerm: searchTerm,
         error: " ",
       });
-    }
+    };
+
   } catch (err) {
     logger.error(err);
     res.render("movies/data", {
       title: "PopcornBase",
-      error: "Error in database query.",
+      error: "Error in database query."
     });
   }
 });
