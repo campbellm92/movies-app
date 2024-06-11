@@ -4,16 +4,31 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="/styles.css">
-    <title>Find movies by data/imdb id page</title>
+    <title>Find movies by title page</title>
 </head>
 <body>
     <div class="main-content">
         {{>header}}
-        <p>Get more detailed information about a movie here!</p>
-        <form action="/movies/data" method="GET">
-        <input type="text" placeholder="Search for a movie by imdb ID">
+        <p class="introMessage">Enter an imdb ID for information on a movie.</p>
+        <form id="searchForm" action="/movies/data" method="GET">
+        <input id="searchInput" type="text" name="q" value="{{searchTerm}}" placeholder="Search for a movie">
         <button>Search</button>
         </form>
+         <div id="results-div">
+        {{#if movies.length}}
+        <p class="resultsMessage">Showing results for: {{searchTerm}}</p>
+        <ul>
+            {{#each movies}}
+                <li>
+                    <strong>{{primaryTitle}}</strong> ({{startYear}})
+                    <p>Genres: {{genres}}</p>
+                </li>
+                {{/each}}
+        </ul>
+        {{else}}
+        {{error}}
+        {{/if}}
+    </div>
     </div>
     {{>footer}}
 </body>
