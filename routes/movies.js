@@ -2,13 +2,15 @@ const express = require("express");
 const router = express.Router();
 const logger = require("../config/logger");
 
+const siteTitle = "PopcornBase"
+
 // router for the movies/search endpoint
 router.get("/search", async (req, res, next) => {
   const searchTerm = req.query.q; // https://www.shecodes.io/athena/72173-what-does-req-query-do-in-express-js
   
   if (searchTerm === undefined) {
     return res.render("movies/search", {
-      title: "PopcornBase",
+      title: siteTitle,
     });
   };
   
@@ -20,17 +22,17 @@ router.get("/search", async (req, res, next) => {
 
     if (!searchTerm) {
       res.render("movies/search", {
-        title: "PopcornBase",
+        title: siteTitle,
         error: "You must provide a title!",
       });
     } else if (rows.length === 0) {
       res.render("movies/search", {
-        title: "PopcornBase",
+        title: siteTitle,
         error: "Movie not found. Please try a different search term.",
       });
     } else {
       res.render("movies/search", {
-        title: "PopcornBase",
+        title: siteTitle,
         movies: rows,
         searchTerm: searchTerm,
         error: " ",
@@ -40,7 +42,7 @@ router.get("/search", async (req, res, next) => {
   } catch (err) {
     logger.error(err);
     res.render("movies/search", {
-      title: "PopcornBase",
+      title: siteTitle,
       error: "Error in database query"
     });
   }
