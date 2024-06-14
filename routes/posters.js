@@ -48,8 +48,8 @@ router.get("/", async (req, res, next) => {
 router.get("/add", (req, res, next) => {
   res.render("posters/add", {
     title: siteTitle,
-  })
-})
+  });
+});
 
 router.post("/add", upload.single("image"), (req, res) => {
   if(!req.file) {
