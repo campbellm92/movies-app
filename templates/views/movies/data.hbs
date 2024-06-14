@@ -14,23 +14,44 @@
         <input id="searchInput" type="text" name="q" value="{{searchTerm}}" placeholder="Search for a movie">
         <button>Search</button>
         </form>
-         <div class="results-div">
-        {{#if movies.length}}
-        <p class="resultsMessage">Showing results for: {{searchTerm}}</p>
-        <ul>
-            {{#each movies}}
-                <li>
-                    <strong>{{primaryTitle}}</strong> ({{startYear}})
-                    <p>Genres: {{genres}}</p>
-                </li>
-                {{/each}}
-        </ul>
-        {{else}}
-        {{error}}
-        {{/if}}
-    </div>
+        
+        <div class="results-div">
+            {{#if catchError}}
+            <p class="error">{{catchError}}</p>
+            {{/if}}
+            {{#if notFoundError}}
+            <p class="error">{{notFoundError}}</p>
+            {{/if}}
+            {{#if noIdError}}
+            <p class="error">{{noIdError}}</p>
+            {{/if}}
+            {{#if combinedInfo.length}}
+            <p class="resultsMessage">Showing results for: {{searchTerm}}</p>
+            <div>
+                <ul>
+                    {{#each combinedInfo}}
+                    <li>
+                        <p class="idResults">Title: {{primaryTitle}}</p>
+                        <p class="idResults">Year: {{startYear}}</p>
+                        <p class="idResults">Runtime: {{runtime}}</p>
+                        <p class="idResults">Director: {{director}}</p>
+                        <p class="idResults">Writer: {{writer}}</p>
+                        <p class="idResults">Actors: {{actors}}</p>
+                        <p class="idResults">Ratings: 
+                        <ul>
+                            {{#each ratings}}
+                            <li>{{source}}: {{value}}</li>
+                            {{/each}}
+                        </ul>
+                    </li>
+                    {{/each}}
+                </ul>
+            </div>
+            {{/if}}
+        </div>
     </div>
     {{>footer}}
+
         
     <script src="/js/darkMode.js" defer></script>
 

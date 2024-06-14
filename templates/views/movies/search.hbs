@@ -14,23 +14,30 @@
         <input id="searchInput" type="text" name="q" value="{{searchTerm}}" placeholder="Search for a movie">
         <button>Search</button>
         </form>
-         <div class="results-div">
-        {{#if movies.length}}
-        <p class="resultsMessage">Showing results for: {{searchTerm}}</p>
-        <ul>
-            {{#each movies}}
-                <li>
-                    <strong>{{primaryTitle}}</strong> ({{startYear}})
-                    <p>Genres: {{genres}}</p>
-                </li>
-                {{/each}}
-        </ul>
-        {{else}}
-        {{error}}
-        {{/if}}
-    </div>
-    </div>
-    {{>footer}}
+
+        <div class="results-div">
+            {{#if catchError}}
+            <p class="error">{{catchError}}</p>
+            {{/if}}
+            {{#if notFoundError}}
+            <p class="error">{{notFoundError}}</p>
+            {{/if}}
+            {{#if noTitleError}}
+            <p class="error">{{noTitleError}}</p>
+            {{/if}}
+            {{#if combinedInfo.length}}
+            <p class="resultsMessage">Showing results for: {{searchTerm}}</p>
+            <div>
+                <ul>
+                    {{#each combinedInfo}}
+                    <li>Title: {{primaryTitle}}, Year: {{startYear}}, IMDb ID: {{tconst}}, Type: {{type}}</li>
+                    {{/each}}
+                </ul>
+            </div>
+            {{/if}}
+        </div>
+        </div>
+        {{>footer}}
 
     <script src="/js/darkMode.js" defer></script>
 
