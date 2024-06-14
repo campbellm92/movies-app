@@ -1,42 +1,39 @@
 const express = require("express");
-const options = require("./config/knexfile");
-const knex = require("knex")(options);
-const logger = require("./config/logger");
 const path = require("path");
+const bodyParser = require("body-parser");
 const hbs = require("hbs");
+const logger = require("./config/logger");
+const moviesRouter = require("./routes/movies");
+const postersRouter = require("./routes/posters");
+//const userRouter = require("./routes/user");
+const indexRouter = require("./routes/index");
 require("dotenv").config();
 
+const app = express();
 const port = process.env.PORT || 3000;
 
-const app = express();
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: false }));
 
 app.use((req, res, next) => {
-    req.db = knex;
-    next();
-})
-
+  req.db = require('knex')(require('./config/knexfile'));
+  next();
+});
 
 const viewsPath = path.join(__dirname, "./templates/views");
-const partialsPath = path.join(__dirname, "./templates/partials"); // src: node course (Udemy)
+const partialsPath = path.join(__dirname, "./templates/partials");
 app.set("view engine", "hbs");
 app.set("views", viewsPath);
 hbs.registerPartials(partialsPath);
 
 app.use(express.static(path.join(__dirname, "public")));
 
-
-// access the routes:
-const indexRouter = require("./routes/index");
-const moviesRouter = require("./routes/movies");
-const postersRouter = require("./routes/posters");
-// const userRouter = require("./routes/user");
-
+// Setup routes
 app.use("/", indexRouter);
 app.use("/movies", moviesRouter);
 app.use("/posters", postersRouter);
-// app.use("/user", userRouter);
-
+//app.use("/user", userRouter);
 
 app.listen(port, () => {
-    console.log("Server up on port 3000");
+  console.log(`Server up on port ${port}`);
 });
