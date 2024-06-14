@@ -1,102 +1,160 @@
 const express = require("express");
 const router = express.Router();
 const logger = require("../config/logger");
-
-const siteTitle = "PopcornBase"
+const { getDBTitleInfo, getDBimdbIDInfo }  = require("../utils/dbFuncs/getDBinfo");
+const { getOMDBTitleInfo, getOMDBimdbIDInfo } = require("../utils/omdbFuncs/getOMDBinfo");
 
 // router for the movies/search endpoint
+
 router.get("/search", async (req, res, next) => {
-  const searchTerm = req.query.q; // https://www.shecodes.io/athena/72173-what-does-req-query-do-in-express-js
-  
+  const searchTerm = req.query.q;
+  const siteTitle = "PopcornBase";
+
   if (searchTerm === undefined) {
     return res.render("movies/search", {
       title: siteTitle,
+      noTitleError: "",
+      notFoundError: "",
+      error: "",
+      combinedInfo: [],
+      searchTerm: "",
     });
   };
   
-  try {
-    const rows = await req
-      .db("basics")
-      .select("primaryTitle", "startYear", "genres")
-      .where("primaryTitle", "like", `%${searchTerm}%`); // https://www.w3schools.com/sql/sql_wildcards.asp
+  if (!searchTerm || searchTerm.trim() === "") { // SRC : https://johnkavanagh.co.uk/articles/check-if-a-string-contains-only-whitespace-with-javascript/
+    return res.render("movies/search", {
+      title: siteTitle,
+      noTitleError: "You must provide a title!",
+      notFoundError: "",
+      error: "",
+      combinedInfo: [],
+      searchTerm: "",
+    });
+  };
 
-    if (!searchTerm) {
-      res.render("movies/search", {
+  try {
+    const dbInfo = await getDBTitleInfo(req.db, searchTerm);
+    const omdbInfo = await getOMDBTitleInfo(searchTerm);
+
+    if (dbInfo.length === 0 && (!omdbInfo || omdbInfo.Response === "False")) {
+      return res.render("movies/search", {
         title: siteTitle,
-        error: "You must provide a title!",
-      });
-    } else if (rows.length === 0) {
-      res.render("movies/search", {
-        title: siteTitle,
-        error: "Movie not found. Please try a different search term.",
-      });
-    } else {
-      res.render("movies/search", {
-        title: siteTitle,
-        movies: rows,
-        searchTerm: searchTerm,
-        error: " ",
+        notFoundError: "Movie not found. Please try a different title.",
+        noTitleError: "",
+        error: "",
+        combinedInfo: [],
+        searchTerm,
       });
     };
+
+    const combinedInfo = dbInfo.map(e => ({
+      ...e,
+      type: omdbInfo.Type,
+    }));
+
+    res.render("movies/search", {
+      title: siteTitle,
+      combinedInfo: combinedInfo,
+      searchTerm: searchTerm,
+      noTitleError: "",
+      notFoundError: "",
+      error: "",
+    });
 
   } catch (err) {
     logger.error(err);
     res.render("movies/search", {
       title: siteTitle,
-      error: "Error in database query"
+      catchError: "An error occurred while fetching the data. Please try again.",
     });
-  }
+  };
 });
-
 // handlebars if statements: https://www.sitepoint.com/a-beginners-guide-to-handlebars/
+
 
 // router for the movies/data endpoint
 router.get("/data", async (req, res, next) => {
   const searchTerm = req.query.q;
+  const siteTitle = "PopcornBase";
 
   if (searchTerm === undefined) {
     return res.render("movies/data", {
-      title: "PopcornBase",
+      title: siteTitle,
+      noIdError: "",
+      notFoundError: "",
+      error: "",
+      combinedInfo: [],
+      searchTerm: "",
     });
-  }; 
+  };
+  
+  if (!searchTerm || searchTerm.trim() === "") { 
+    return res.render("movies/data", {
+      title: siteTitle,
+      noIdError: "You must provide an IMDb Id!",
+      notFoundError: "",
+      error: "",
+      combinedInfo: [],
+      searchTerm: "",
+    });
+  };
 
   try {
-    const rows = await req
-      .db("basics")
-      .select("primaryTitle", "startYear", "genres")
-      .where("tconst", "like", `%${searchTerm}%`);
+    const dbInfo = await getDBimdbIDInfo(req.db, searchTerm);
+    const omdbInfo = await getOMDBimdbIDInfo(searchTerm);
 
-    if (!searchTerm) {
-      res.render("movies/data", {
-        title: "PopcornBase",
-        error: "You must provide an imdb ID number!",
-      });
-    } else if (rows.length === 0) {
-      res.render("movies/data", {
-        title: "PopcornBase",
-        error: "Movie not found. Please try a different search term.",
-      });
-    } else {
-      res.render("movies/data", {
-        title: "PopcornBase",
-        movies: rows,
-        searchTerm: searchTerm,
-        error: " ",
+    if (dbInfo.length === 0 && (!omdbInfo || omdbInfo.Response === "False")) {
+      return res.render("movies/data", {
+        title: siteTitle,
+        notFoundError: "Movie not found. Please try a different title.",
+        noIdError: "",
+        error: "",
+        combinedInfo: [],
+        searchTerm,
       });
     };
+
+    const combinedInfo = [];
+
+    if (omdbInfo && omdbInfo.imdbID) {
+      for (let i = 0; i < dbInfo.length; i++) {
+        if (dbInfo[i].tconst === omdbInfo.imdbID) {
+          const combined = {
+            ...dbInfo[i],
+            runtime: omdbInfo.Runtime,
+            director: omdbInfo.Director,
+            writer: omdbInfo.Writer,
+            actors: omdbInfo.Actors,
+            ratings: omdbInfo.Ratings.map(info => ({
+              source: info.Source,
+              value: info.Value
+            })),
+          };
+          combinedInfo.push(combined);
+        }
+      }
+    }
+
+    res.render("movies/data", {
+      title: siteTitle,
+      combinedInfo: combinedInfo,
+      searchTerm: searchTerm,
+      noIdError: "",
+      notFoundError: "",
+      error: "",
+    });
 
   } catch (err) {
     logger.error(err);
     res.render("movies/data", {
-      title: "PopcornBase",
-      error: "Error in database query."
+      title: siteTitle,
+      catchError: "An error occurred while fetching the data. Please try again.",
     });
-  }
+  };
 });
+
+
 
 module.exports = router;
 
-// res.render("movies/search", {
-//     title: "PopcornBase"
-// });
-// logger.info("landed @ movies search page")
+
