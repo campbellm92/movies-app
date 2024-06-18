@@ -4,15 +4,13 @@ const logger = require("../config/logger");
 const { getDBTitleInfo, getDBimdbIDInfo }  = require("../utils/dbFuncs/getDBinfo");
 const { getOMDBTitleInfo, getOMDBimdbIDInfo } = require("../utils/omdbFuncs/getOMDBinfo");
 
-// router for the movies/search endpoint
+// Router for the movies/search endpoint:
 
 router.get("/search", async (req, res, next) => {
   const searchTerm = req.query.q;
-  const siteTitle = "PopcornBase";
 
   if (searchTerm === undefined) {
     return res.render("movies/search", {
-      title: siteTitle,
       noTitleError: "",
       notFoundError: "",
       error: "",
@@ -23,7 +21,6 @@ router.get("/search", async (req, res, next) => {
   
   if (!searchTerm || searchTerm.trim() === "") { // SRC : https://johnkavanagh.co.uk/articles/check-if-a-string-contains-only-whitespace-with-javascript/
     return res.render("movies/search", {
-      title: siteTitle,
       noTitleError: "You must provide a title!",
       notFoundError: "",
       error: "",
@@ -38,7 +35,6 @@ router.get("/search", async (req, res, next) => {
 
     if (dbInfo.length === 0 && (!omdbInfo || omdbInfo.Response === "False")) {
       return res.render("movies/search", {
-        title: siteTitle,
         notFoundError: "Movie not found. Please try a different title.",
         noTitleError: "",
         error: "",
@@ -53,7 +49,6 @@ router.get("/search", async (req, res, next) => {
     }));
 
     res.render("movies/search", {
-      title: siteTitle,
       combinedInfo: combinedInfo,
       searchTerm: searchTerm,
       noTitleError: "",
@@ -64,7 +59,6 @@ router.get("/search", async (req, res, next) => {
   } catch (err) {
     logger.error(err);
     res.render("movies/search", {
-      title: siteTitle,
       catchError: "An error occurred while fetching the data. Please try again.",
     });
   };
@@ -72,14 +66,15 @@ router.get("/search", async (req, res, next) => {
 // handlebars if statements: https://www.sitepoint.com/a-beginners-guide-to-handlebars/
 
 
-// router for the movies/data endpoint
+
+
+// Router for the movies/data endpoint:
+
 router.get("/data", async (req, res, next) => {
   const searchTerm = req.query.q;
-  const siteTitle = "PopcornBase";
 
   if (searchTerm === undefined) {
     return res.render("movies/data", {
-      title: siteTitle,
       noIdError: "",
       notFoundError: "",
       error: "",
@@ -90,7 +85,6 @@ router.get("/data", async (req, res, next) => {
   
   if (!searchTerm || searchTerm.trim() === "") { 
     return res.render("movies/data", {
-      title: siteTitle,
       noIdError: "You must provide an IMDb Id!",
       notFoundError: "",
       error: "",
@@ -105,7 +99,6 @@ router.get("/data", async (req, res, next) => {
 
     if (dbInfo.length === 0 && (!omdbInfo || omdbInfo.Response === "False")) {
       return res.render("movies/data", {
-        title: siteTitle,
         notFoundError: "Movie not found. Please try a different title.",
         noIdError: "",
         error: "",
@@ -136,7 +129,6 @@ router.get("/data", async (req, res, next) => {
     }
 
     res.render("movies/data", {
-      title: siteTitle,
       combinedInfo: combinedInfo,
       searchTerm: searchTerm,
       noIdError: "",
@@ -147,7 +139,6 @@ router.get("/data", async (req, res, next) => {
   } catch (err) {
     logger.error(err);
     res.render("movies/data", {
-      title: siteTitle,
       catchError: "An error occurred while fetching the data. Please try again.",
     });
   };
