@@ -3,14 +3,20 @@ const path = require("path");
 const bodyParser = require("body-parser");
 const hbs = require("hbs");
 const logger = require("./config/logger");
+const helmet = require("helmet");
 const moviesRouter = require("./routes/movies");
 const postersRouter = require("./routes/posters");
-//const userRouter = require("./routes/user");
+const userRouter = require("./routes/user");
 const indexRouter = require("./routes/index");
 require("dotenv").config();
 
+// security: look into express rate limit, CORS
+// CORS: https://www.npmjs.com/package/cors
+
 const app = express();
 const port = process.env.PORT || 3000;
+
+app.use(helmet());
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -28,11 +34,11 @@ hbs.registerPartials(partialsPath);
 
 app.use(express.static(path.join(__dirname, "public")));
 
-// Setup routes
+// Set up routes
 app.use("/", indexRouter);
 app.use("/movies", moviesRouter);
 app.use("/posters", postersRouter);
-//app.use("/user", userRouter);
+app.use("/user", userRouter);
 
 app.listen(port, () => {
   console.log(`Server up on port ${port}`);
