@@ -9,9 +9,9 @@
 <body>
     <div class="main-content">
         {{>header}}
-        <p class="introMessage">Enter an imdb ID for information on a movie.</p>
-        <form id="searchForm" action="/movies/data" method="GET">
-        <input id="searchInput" type="text" name="q" value="{{searchTerm}}" placeholder="Search for a movie">
+        <p class="intro-message">Enter an imdb ID for information on a movie.</p>
+        <form class="search-form" action="/movies/data" method="GET">
+        <input class="search-input" type="text" name="q" value="{{searchTerm}}" placeholder="Search for a movie">
         <button>Search</button>
         </form>
         
@@ -34,6 +34,7 @@
                         <p class="idResults">Title: {{primaryTitle}}</p>
                         <p class="idResults">Year: {{startYear}}</p>
                         <p class="idResults">Runtime: {{runtime}}</p>
+                        <p class="idResults">Genre: {{genres}}</p>
                         <p class="idResults">Director: {{director}}</p>
                         <p class="idResults">Writer: {{writer}}</p>
                         <p class="idResults">Actors: {{actors}}</p>

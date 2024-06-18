@@ -9,9 +9,12 @@
 <body>
     <div class="main-content">
         {{>header}}
-        <p class="introMessage">Upload a movie poster here!</p>
+        <p class="intro-message">Upload a movie poster here!</p>
         <form action="/posters/add" method="POST" enctype="multipart/form-data">
-        <input type="file" name="image" accept="image/*">
+        <label for="imdbid">IMDb ID:</label>
+        <input id="imdbid" type="text" name="imdbid" required>
+        <label for="image">Select image:</label>
+        <input id="image" type="file" name="image" accept="image/*" required>
         <button type="submit">Upload poster</button>
         </form>
     </div>

@@ -9,14 +9,14 @@
 <body>
     <div class="main-content">
         {{>header}}
-        <p class="introMessage">Find a movie poster by IMDBb ID. You can try it with tt0027977</p>
+        <p class="intro-message">Find a movie poster by IMDBb ID. You can try it with tt0027977</p>
         <form action="/posters" method="GET">
         <input type="text" name="q" value="{{searchTerm}}" placeholder="Search for a poster">
         <button>Search</button>
         </form>
         <div class="results-div">
             {{#if poster}}
-                <p class="resultsMessage">Download your poster for {{searchTerm}} below!</p>
+                <p class="results-message">Download your poster for {{searchTerm}} below!</p>
                 <img src="{{poster}}" alt ="Movie Poster">
             {{/if}}
         </div>

@@ -9,9 +9,9 @@
 <body>
     <div class="main-content">
         {{>header}}
-        <p class="introMessage">Get information about a movie here!</p>
-        <form id="searchForm" action="/movies/search" method="GET">
-        <input id="searchInput" type="text" name="q" value="{{searchTerm}}" placeholder="Search for a movie">
+        <p class="intro-message">Get information about a movie here!</p>
+        <form class="search-form" action="/movies/search" method="GET">
+        <input class="search-input" type="text" name="q" value="{{searchTerm}}" placeholder="Search for a movie">
         <button>Search</button>
         </form>
 
@@ -26,11 +26,12 @@
             <p class="error">{{noTitleError}}</p>
             {{/if}}
             {{#if combinedInfo.length}}
-            <p class="resultsMessage">Showing results for: {{searchTerm}}</p>
+            <p class="results-message">Showing results for: {{searchTerm}}</p>
             <div>
                 <ul>
                     {{#each combinedInfo}}
-                    <li>Title: {{primaryTitle}}, Year: {{startYear}}, IMDb ID: {{tconst}}, Type: {{type}}</li>
+                    <li>Title: {{primaryTitle}}, Year: {{startYear}}, IMDb ID: {{tconst}}, Type: {{type}}
+                    </li>
                     {{/each}}
                 </ul>
             </div>
