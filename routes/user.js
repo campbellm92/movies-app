@@ -41,9 +41,8 @@ router.post("/register", async (req, res, next) => {
       await req.db.from("users").insert({ email, hash });
   
       res.status(201).render("user/register", { 
-        successMessage: "User created" });
+        successfulCreation: "User created" });
     } catch (error) {
-      logger.error(error);
       res.status(500).json({ error: true, message: "An error occurred" });
     };
   });
@@ -103,5 +102,8 @@ router.post("/login", async (req, res, next) => {
     };
 });
 
+router.get("/profile", authenticateJWT, (req, res, next) => {
+  res.status(200).json({ error: false, user: req.user });
+});
 
 module.exports = router;
