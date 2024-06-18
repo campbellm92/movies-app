@@ -28,6 +28,10 @@ h1 {
     margin-bottom: 16px;
 }
 
+.dark-mode h1 {
+    color: white;
+}
+
 header a {
     margin-right: 16px;
     text-decoration: none;
@@ -37,13 +41,25 @@ header a {
     color: #888888;
 }
 
+.dark-mode .links{
+    color: white;
+}
+
 .login-register {
     color: #104F55;
 }
 
-.introMessage {
+.dark-mode .login-register{
+    color: #80ff9c;
+}
+
+.intro-message {
     margin-bottom: 48px;
     color: #32746D;
+}
+
+.dark-mode .intro-message {
+    color: #bbbbbb;
 }
 
 form {
@@ -59,9 +75,13 @@ button {
     height: 30px;
 }
 
-.resultsMessage {
+.results-message {
     padding-bottom: 18px;
     font-style: italic;
+}
+
+.dark-mode .results-message {
+    color: #bbbbbb;
 }
 
 ul {
@@ -85,6 +105,10 @@ footer {
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
+}
+
+.darkmode footer p { 
+    color: #bbbbbb;
 }
 
 .circle-half {
