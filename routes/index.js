@@ -6,7 +6,6 @@ router.get("/", (req, res) => {
     res.render("index", {
         title: "PopcornBase"
     });
-    logger.info("landed @ homepage");
 });
 
 
