@@ -9,9 +9,7 @@ const { authenticateJWT, generateAccessToken } = require("../middleware/auth");
 require("dotenv").config();
 
 router.get("/register", (req, res, next) => {
-    res.render("user/register", {
-        title: "PopcornBase",
-    })
+    res.render("user/register")
 });
 
 router.post("/register", registerLimiter, async (req, res, next) => {
@@ -28,6 +26,13 @@ router.post("/register", registerLimiter, async (req, res, next) => {
         return res.status(400).render("user/register", {
         invalidEmailError: "You must provide a valid email address",
         });
+      };
+
+      if (!validator.isStrongPassword(password)) {
+        return res.status(400).render("user/register", {
+          invalidPasswordError: 
+          "Password must be a minimum of 8 characters, with at least 1 uppercase letter, 1 number and 1 symbol"
+          });
       };
   
       const usersQuery = await req.db.from("users").where("email", "=", email);
@@ -53,9 +58,7 @@ router.post("/register", registerLimiter, async (req, res, next) => {
 // Login routers
 
 router.get("/login", (req, res, next) => {
-    res.render("user/login", {
-        title: "PopcornBase",
-    });
+    res.render("user/login");
 });
 
 router.post("/login", async (req, res, next) => {
@@ -64,19 +67,19 @@ router.post("/login", async (req, res, next) => {
         const password = req.body.password;
     
         if (!email || !password) {
-            return res.status(400).json({
+            return res.status(400).render("user/login", {
                 error: true,
-                message: 
+                requiredError: 
                 "Request body incomplete, both email and password are required"
             });
-        }
+        };
     
     const users = await req.db.from("users").where("email", "=", email); 
 
     if (users.length === 0) {
-        return res.status(401).json({
+        return res.status(401).render("user/login", {
             error: true,
-            message: "Incorrect email or password"
+            incorrectError: "Incorrect email or password"
         })
     }
 
@@ -84,18 +87,19 @@ router.post("/login", async (req, res, next) => {
     const pwMatch = await bcrypt.compare(password, user.hash);
 
     if (!pwMatch) {
-        return res.status(401).json({
+        return res.status(401).render("user/login", {
             error: true,
-            message: "Password doesn't match records. Please try again"
+            invalidPasswordError: "Password doesn't match records. Please try again"
         });
     };
 
     const token = generateAccessToken(email);
 
-    res.status(200).json({
+    res.status(200).render("user/login", {
         token,
         token_type: "Bearer",
-        expires_in: 36000
+        expires_in: 36000,
+        loginSuccessMessage: "Login successful"
     });
 
     } catch(error) {
