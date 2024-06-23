@@ -4,6 +4,7 @@ const bodyParser = require("body-parser");
 const hbs = require("hbs");
 const logger = require("./config/logger");
 const helmet = require("helmet");
+const limiter = require("./middleware/rateLimiter");
 const moviesRouter = require("./routes/movies");
 const postersRouter = require("./routes/posters");
 const userRouter = require("./routes/user");
@@ -16,7 +17,16 @@ require("dotenv").config();
 const app = express();
 const port = process.env.PORT || 3000;
 
-app.use(helmet());
+app.use(helmet({
+  contentSecurityPolicy: {
+    useDefaults: true,
+    directives: {
+      "img-src": ["self", "https://m.media-amazon.com"]
+    }
+  }
+})); // SRC: https://blog.logrocket.com/using-helmet-node-js-secure-application/
+
+app.use(limiter);
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
