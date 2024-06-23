@@ -62,6 +62,10 @@ header a {
     color: #bbbbbb;
 }
 
+.success {
+    color: #32746D;
+}
+
 form {
     margin-bottom: 48px;
 }
