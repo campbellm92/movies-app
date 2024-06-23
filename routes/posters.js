@@ -2,33 +2,42 @@ const express = require("express");
 const router = express.Router();
 const logger = require("../config/logger");
 const upload = require("../middleware/multerUpload");
-const getDBimdbIDInfo = require("../utils/dbFuncs/getDBinfo");
 require("dotenv").config({ path: "../.env" });
 
-const OMDB_BASE = "https://www.omdbapi.com/?apikey="
+const OMDB_BASE = "https://www.omdbapi.com/"
 const OMDB_API_KEY = process.env.OMDB_KEY;
 
 
-// tt0027977
 // find posters route
 router.get("/", async (req, res, next) => {
   const searchTerm = req.query.q;
-  const url = OMDB_BASE + OMDB_API_KEY + "&i=" + searchTerm;
+  const url = `${OMDB_BASE}?apikey=${OMDB_API_KEY}&i=${searchTerm}`;
 
   if (searchTerm === undefined) {
-    return res.render("posters/posters");
+    return res.render("posters/posters", {
+      noMoviesError: "",
+      searchTerm: searchTerm
+    });
   };
 
-  try { // consider wiring it up to fetch the poster from the db, but also having the API as a backup
+  if (!searchTerm || searchTerm.trim() === "") {
+    return res.status(400).render("posters/posters", {
+      noSearchError: "You must provide an IMDb Id!",
+      noMoviesError: "",
+      searchTerm: searchTerm
+    })
+  }
+
+  try { // consider wiring this up to fetch the poster from the db, but also having the API as a backup
     const response = await fetch(url);
     const data = await response.json();
 
     if (!data || data.Response === "False") {
-      return res.render("posters/posters", {
-        error: "No movies found",
+      return res.status(404).render("posters/posters", {
+        noMoviesError: "No movies found",
       });
     } else {
-      res.render("posters/posters", {
+      res.status(200).render("posters/posters", {
         poster: data.Poster,
         searchTerm: searchTerm,
         error: " ",
@@ -36,6 +45,9 @@ router.get("/", async (req, res, next) => {
     }
   } catch (err) {
     logger.log(err);
+    res.status(500).render("posters/posters", {
+      serverError: "An error occurred while fetching the data. Please try again."
+    })
   }
 });
 
@@ -45,13 +57,15 @@ router.get("/add", (req, res, next) => {
   res.render("posters/add");
 });
 
-router.post("/add", upload.single("image"), async (req, res) => { // image uploading to local storage but can't get path to DB
+// this uploading to local storage, but not to the database
+
+router.post("/add", upload.single("image"), async (req, res) => { 
   const filePath = req.file.path;
   const imdbid = req.body.imdbid;
   const file = req.file;
 
   if(!imdbid) {
-    return res.render("posters/add", {
+    return res.status(400).render("posters/add", {
       error: "You must provide an IMDb ID!"
     })
   };
@@ -66,18 +80,25 @@ router.post("/add", upload.single("image"), async (req, res) => { // image uploa
     const movie = await knex("basics").where("tconst", imdbid).first();
 
     if (!movie) {
-      return res.render("posters/add", {
+      return res.status(400).render("posters/add", {
         error: "Movie not found"
       });
     };
+    
     const update = await knex("basics").where("tconst", imdbid).update({ posters: filePath });
 
-    res.render("posters/add", {
-      message: "Poster uploaded successfully",
-      error: ""
-    });
+    if(!update) { 
+      res.send(400)
+    } else {
+      res.status(200).render("posters/add", {
+        message: "Poster uploaded successfully",
+        error: ""
+      });
+    }
+
+
   } catch (err) {
-    res.render("posters/add", {
+    res.status(500).render("posters/add", {
       error: "Upload failed"
     })
   }
@@ -87,16 +108,3 @@ router.post("/add", upload.single("image"), async (req, res) => { // image uploa
 
 module.exports = router;
 
-// SRC dynamically updating pictures for posters https://stackoverflow.com/questions/12531743/handlebars-templating-and-dynamic-images
-
-
-
-  // if(!req.file) {
-  //   res.render("posters/add", {
-  //     error: "Upload failed"
-  //   });
-  // } else {
-  //   res.render("posters/add", {
-  //     message: "Image uploaded successfully."
-  //   });
-  // };
