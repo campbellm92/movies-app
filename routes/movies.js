@@ -20,13 +20,14 @@ router.get("/search", async (req, res, next) => {
   };
   
   if (!searchTerm || searchTerm.trim() === "") { // SRC : https://johnkavanagh.co.uk/articles/check-if-a-string-contains-only-whitespace-with-javascript/
-    return res.render("movies/search", {
+    return res.status(400).render("movies/search", {
       noTitleError: "You must provide a title!",
       notFoundError: "",
       error: "",
       combinedInfo: [],
       searchTerm: "",
     });
+  
   };
 
   try {
@@ -34,7 +35,7 @@ router.get("/search", async (req, res, next) => {
     const omdbInfo = await getOMDBTitleInfo(searchTerm);
 
     if (dbInfo.length === 0 && (!omdbInfo || omdbInfo.Response === "False")) {
-      return res.render("movies/search", {
+      return res.status(404).render("movies/search", {
         notFoundError: "Movie not found. Please try a different title.",
         noTitleError: "",
         error: "",
@@ -48,7 +49,7 @@ router.get("/search", async (req, res, next) => {
       type: omdbInfo.Type,
     }));
 
-    res.render("movies/search", {
+    res.status(200).render("movies/search", {
       combinedInfo: combinedInfo,
       searchTerm: searchTerm,
       noTitleError: "",
@@ -58,12 +59,11 @@ router.get("/search", async (req, res, next) => {
 
   } catch (err) {
     logger.error(err);
-    res.render("movies/search", {
+    res.status(500).render("movies/search", {
       catchError: "An error occurred while fetching the data. Please try again.",
     });
   };
 });
-// handlebars if statements: https://www.sitepoint.com/a-beginners-guide-to-handlebars/
 
 
 
@@ -84,7 +84,7 @@ router.get("/data", async (req, res, next) => {
   };
   
   if (!searchTerm || searchTerm.trim() === "") { 
-    return res.render("movies/data", {
+    return res.status(400).render("movies/data", {
       noIdError: "You must provide an IMDb Id!",
       notFoundError: "",
       error: "",
@@ -97,8 +97,8 @@ router.get("/data", async (req, res, next) => {
     const dbInfo = await getDBimdbIDInfo(req.db, searchTerm);
     const omdbInfo = await getOMDBimdbIDInfo(searchTerm);
 
-    if (dbInfo.length === 0 && (!omdbInfo || omdbInfo.Response === "False")) {
-      return res.render("movies/data", {
+    if (dbInfo.length === 0 || (!omdbInfo || omdbInfo.Response === "False")) {
+      return res.status(404).render("movies/data", {
         notFoundError: "Movie not found. Please try a different title.",
         noIdError: "",
         error: "",
@@ -125,10 +125,10 @@ router.get("/data", async (req, res, next) => {
           };
           combinedInfo.push(combined);
         }
-      }
-    }
+      };
+    };
 
-    res.render("movies/data", {
+    res.status(200).render("movies/data", {
       combinedInfo: combinedInfo,
       searchTerm: searchTerm,
       noIdError: "",
@@ -138,7 +138,7 @@ router.get("/data", async (req, res, next) => {
 
   } catch (err) {
     logger.error(err);
-    res.render("movies/data", {
+    res.status(200).render("movies/data", {
       catchError: "An error occurred while fetching the data. Please try again.",
     });
   };
