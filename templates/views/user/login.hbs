@@ -12,7 +12,8 @@
     <div class="main-content">
         {{>header}}
         <p class="intro-message">Please login below.</p>
-
+      
+        <form method="POST" action="/user/login">
         <label for="Email">Email</label>
         <input type="email" name="email" id="email" required>
 
@@ -20,6 +21,23 @@
         <input type="password" name="password" id="password" required>
 
         <button type="submit">Login</button>
+        </form>
+
+        <div class="results-div">
+            {{#if requiredError}}
+            <p class="error">{{requiredError}}</p>
+            {{/if}}
+            {{#if incorrectError}}
+            <p class="error">{{incorrectError}}</p>
+            {{/if}}
+            {{#if invalidPasswordError}}
+            <p class="error">{{invalidPasswordError}}</p>
+            {{/if}}
+            {{#if loginSuccessMessage}}
+            <p class="success">{{loginSuccessMessage}}</p>
+            {{/if}}
+        </div>
+
 
     </div>
     {{>footer}}
