@@ -2,7 +2,7 @@ const express = require("express");
 const path = require("path");
 const bodyParser = require("body-parser");
 const hbs = require("hbs");
-const helmet = require("helmet");
+const helmetMW = require("./middleware/helmet");
 const { limiter } = require("./middleware/rateLimiter");
 const moviesRouter = require("./routes/movies");
 const postersRouter = require("./routes/posters");
@@ -10,17 +10,9 @@ const userRouter = require("./routes/user");
 const indexRouter = require("./routes/index");
 require("dotenv").config();
 
-
 const app = express();
 
-app.use(helmet({
-  contentSecurityPolicy: {
-    useDefaults: true,
-    directives: {
-      "img-src": ["self", "https://m.media-amazon.com"]
-    }
-  }
-})); // SRC: https://blog.logrocket.com/using-helmet-node-js-secure-application/
+app.use(helmetMW); 
 
 app.use(limiter);
 
