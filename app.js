@@ -2,7 +2,6 @@ const express = require("express");
 const path = require("path");
 const bodyParser = require("body-parser");
 const hbs = require("hbs");
-const logger = require("./config/logger");
 const helmet = require("helmet");
 const { limiter } = require("./middleware/rateLimiter");
 const moviesRouter = require("./routes/movies");
@@ -11,11 +10,8 @@ const userRouter = require("./routes/user");
 const indexRouter = require("./routes/index");
 require("dotenv").config();
 
-// security: look into express rate limit, CORS
-// CORS: https://www.npmjs.com/package/cors
 
 const app = express();
-const port = process.env.PORT || 3000;
 
 app.use(helmet({
   contentSecurityPolicy: {
@@ -50,6 +46,4 @@ app.use("/movies", moviesRouter);
 app.use("/posters", postersRouter);
 app.use("/user", userRouter);
 
-app.listen(port, () => {
-  console.log(`Server up on port ${port}`);
-});
+module.exports = app;
