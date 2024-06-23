@@ -2,6 +2,8 @@
 const express = require("express");
 const router = express.Router();
 const logger = require("../config/logger");
+const { registerLimiter } = require("../middleware/rateLimiter");
+const validator = require("validator");
 const bcrypt = require("bcrypt");
 const { authenticateJWT, generateAccessToken } = require("../middleware/auth");
 require("dotenv").config();
@@ -12,7 +14,7 @@ router.get("/register", (req, res, next) => {
     })
 });
 
-router.post("/register", async (req, res, next) => {
+router.post("/register", registerLimiter, async (req, res, next) => {
     try {
       const { email, password } = req.body;
   
@@ -22,7 +24,7 @@ router.post("/register", async (req, res, next) => {
         });
       };
   
-      if (!email.includes("@")) {
+      if (!validator.isEmail(email)) {
         return res.status(400).render("user/register", {
         invalidEmailError: "You must provide a valid email address",
         });
