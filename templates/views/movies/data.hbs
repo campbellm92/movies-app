@@ -9,7 +9,7 @@
 <body>
     <div class="main-content">
         {{>header}}
-        <p class="intro-message">Enter an imdb ID for information on a movie.</p>
+        <p class="intro-message">Enter an imdb ID for information about a movie. Try this one if you like: tt0101540</p>
         <form class="search-form" action="/movies/data" method="GET">
         <input class="search-input" type="text" name="q" value="{{searchTerm}}" placeholder="Search for a movie">
         <button>Search</button>
