@@ -19,7 +19,7 @@ router.get("/search", async (req, res, next) => {
     });
   };
   
-  if (!searchTerm || searchTerm.trim() === "") { // SRC : https://johnkavanagh.co.uk/articles/check-if-a-string-contains-only-whitespace-with-javascript/
+  if (!searchTerm || searchTerm.trim() === "") { 
     return res.status(400).render("movies/search", {
       noTitleError: "You must provide a title!",
       notFoundError: "",
@@ -99,7 +99,7 @@ router.get("/data", async (req, res, next) => {
 
     if (dbInfo.length === 0 || (!omdbInfo || omdbInfo.Response === "False")) {
       return res.status(404).render("movies/data", {
-        notFoundError: "Movie not found. Please try a different title.",
+        notFoundError: "Movie not found. Please try a different IMDb ID.",
         noIdError: "",
         error: "",
         combinedInfo: [],
