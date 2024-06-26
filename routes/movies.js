@@ -138,7 +138,7 @@ router.get("/data", async (req, res, next) => {
 
   } catch (err) {
     logger.error(err);
-    res.status(200).render("movies/data", {
+    res.status(500).render("movies/data", {
       catchError: "An error occurred while fetching the data. Please try again.",
     });
   };
