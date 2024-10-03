@@ -6,6 +6,8 @@
 
 This is a static, Node-based RESTful API created as part of my university course at the Queensland University of Technology. The application no longer works (except for fetching posters) as the API has been taken down by the university.
 
+A better version of this app is currently under development.
+
 ## Tech
 
 - **Node.js & Express** for user requests.
